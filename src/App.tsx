@@ -56,3 +56,9 @@ function App() {
 }
 
 export default App;
+<Route path="/register-school" element={<SchoolRegister />} />
+<Route path="/school-login" element={<SchoolLogin />} />
+<Route path="/school-dashboard" element={<SchoolDashboard />} />
+<Route path="/feedback" element={<FeedbackPublic />} />
+<Link to="/feedback">Student Feedback</Link>
+<Link to="/school-login">School Login</Link>

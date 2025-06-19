@@ -216,3 +216,80 @@ const SubmitFeedback = () => {
 };
 
 export default SubmitFeedback;
+import { useState, useEffect } from 'react';
+import axios from 'axios';
+
+export default function SubmitFeedback() {
+  const [content, setContent] = useState('');
+  const [rating, setRating] = useState(5);
+  const [schoolName, setSchoolName] = useState('');
+  const [schools, setSchools] = useState([]);
+
+  useEffect(() => {
+    axios.get('https://fixmyschool-api.onrender.com/api/schools/list')
+      .then(res => setSchools(res.data))
+      .catch(() => setSchools([]));
+  }, []);
+
+  const handleSubmit = async (e: any) => {
+    e.preventDefault();
+    try {
+      await axios.post('https://fixmyschool-api.onrender.com/api/feedbacks', {
+        content,
+        rating,
+        schoolName,
+        anonymous: true,
+      });
+      alert('Feedback submitted successfully!');
+      setContent('');
+      setRating(5);
+      setSchoolName('');
+    } catch {
+      alert('Failed to submit feedback');
+    }
+  };
+
+  return (
+    <div className="p-6 min-h-screen bg-gray-100 flex justify-center items-center">
+      <form onSubmit={handleSubmit} className="bg-white p-6 rounded shadow-lg w-full max-w-lg">
+        <h2 className="text-2xl font-bold mb-4">Submit Feedback</h2>
+        <textarea
+          value={content}
+          onChange={(e) => setContent(e.target.value)}
+          placeholder="Write your feedback here..."
+          className="w-full p-3 border rounded mb-4"
+          rows={4}
+          required
+        ></textarea>
+
+        <label className="block mb-2">Rating (1-5)</label>
+        <input
+          type="number"
+          min={1}
+          max={5}
+          value={rating}
+          onChange={(e) => setRating(Number(e.target.value))}
+          className="w-full p-2 border rounded mb-4"
+        />
+
+        <label className="block mb-2">Select School</label>
+        <select
+          value={schoolName}
+          onChange={(e) => setSchoolName(e.target.value)}
+          className="w-full p-3 border rounded mb-4"
+          required
+        >
+          <option value="">-- Select School --</option>
+          {schools.map((school: any) => (
+            <option key={school._id} value={school.name}>{school.name}</option>
+          ))}
+        </select>
+
+        <button type="submit" className="w-full bg-blue-600 text-white p-3 rounded hover:bg-blue-700 transition">
+          Submit Feedback
+        </button>
+      </form>
+    </div>
+  );
+}
+
